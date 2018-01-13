@@ -1,15 +1,26 @@
 (ns web.views
   (:require [re-frame.core :as re-frame]
             [web.subs :as subs]
+            [web.constants :as constants]
+            [clojure.string :as string]
             ))
 
 
 ;; home
 
 (defn home-panel []
-  (let [name (re-frame/subscribe [::subs/name])]
-    [:div (str "Hello from " @name ". This is the Home Page.")
-     [:div [:a {:href "#/about"} "go to About Page"]]]))
+  (let []
+    [:div
+     [:div {:class "row"}
+      [:div {:class "col s2"} [:img.profile-picture-home {:src constants/home-profile-picture}]]]
+     [:div {:class "row"}
+      [:div {:class "col s2"} (string/join " " [constants/title constants/full-name])]]
+     [:div {:class "row"}
+      [:div {:class "col s1"} constants/job-title]]
+     [:div {:class "row"}
+      [:div {:class "col s6"} constants/academic-titles]]
+     [:div {:class "row"}
+      [:div {:class "col s8"} constants/summary]]]))
 
 
 ;; about
