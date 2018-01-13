@@ -1,4 +1,8 @@
 (ns web.db)
 
 (def default-db
-  {:name "re-frame"})
+  {:active-panel :home-panel
+   :contact-form {:name ""
+                  :email-address ""
+                  :subject ""
+                  :message ""}})

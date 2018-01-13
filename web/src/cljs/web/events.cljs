@@ -11,3 +11,8 @@
  ::set-active-panel
  (fn [db [_ active-panel]]
    (assoc db :active-panel active-panel)))
+
+(re-frame/reg-event-db
+ ::contact-form-value-change
+ (fn [db [_ field value]]
+   (assoc-in db [:contact-form field] value)))

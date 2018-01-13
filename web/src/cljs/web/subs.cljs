@@ -2,9 +2,24 @@
   (:require [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::name
+ ::contact-form-name
  (fn [db]
-   (:name db)))
+   (get-in db [:contact-form :name])))
+
+(re-frame/reg-sub
+ ::contact-form-email-address
+ (fn [db]
+   (get-in db [:contact-form :email-address])))
+
+(re-frame/reg-sub
+ ::contact-form-subject
+ (fn [db]
+   (get-in db [:contact-form :subject])))
+
+(re-frame/reg-sub
+ ::contact-form-message
+ (fn [db]
+   (get-in db [:contact-form :message])))
 
 (re-frame/reg-sub
  ::active-panel

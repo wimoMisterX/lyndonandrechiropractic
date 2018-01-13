@@ -3,7 +3,13 @@
             [web.subs :as subs]
             [web.constants :as constants]
             [clojure.string :as string]
+            [web.events :as events]
             ))
+
+;; helpers
+
+(defn paragraph [para]
+  [:p.flow-text.center-align para])
 
 
 ;; home
@@ -12,7 +18,7 @@
   (let []
     [:div
      [:div {:class "row"}
-      [:div {:class "col s2"} [:img.profile-picture-home {:src constants/home-profile-picture}]]]
+      [:div {:class "col s2"} [:img.responsive-img {:src constants/home-profile-picture}]]]
      [:div {:class "row"}
       [:div {:class "col s2"} (string/join " " [constants/title constants/full-name])]]
      [:div {:class "row"}
@@ -26,22 +32,61 @@
 ;; about
 
 (defn about-panel []
-  [:div "This is the About Page."
-   [:div [:a {:href "#/"} "go to Home Page"]]])
+  [:div (map paragraph constants/about-content)])
 
 
 ;; experience
 
 (defn experience-panel []
-  [:div "This is the experience Page."
-   [:div [:a {:href "#/"} "go to Home Page"]]])
+  [:div (map paragraph constants/experience-content)])
 
 
 ;; contact
 
+(defn input-field [input-type field-name value label form-change-ev]
+  [:div.input-field
+    [:input.validate {:type input-type
+                      :id field-name
+                      :value value
+                      :on-change #(re-frame/dispatch [form-change-ev (keyword field-name) (-> % .-target .-value)])}]
+    [:label {:for field-name} label]])
+
+(defn text-area [field-name value label form-change-ev]
+  [:div.input-field
+    [:textarea.materialize-textarea {:id field-name
+                                     :value value
+                                     :on-change #(re-frame/dispatch [form-change-ev (keyword field-name) (-> % .-target .-value)])}]
+    [:label {:for field-name} label]])
+
+(defn contact-form []
+  (let [name (re-frame/subscribe [::subs/contact-form-name])
+        email-address (re-frame/subscribe [::subs/contact-form-email-address])
+        subject (re-frame/subscribe [::subs/contact-form-subject])
+        message (re-frame/subscribe [::subs/contact-form-message])]
+    [:div
+     (input-field "text" "name" @name "Name" ::events/contact-form-value-change)
+     (input-field "email" "email-address" @email-address "Email Address" ::events/contact-form-value-change)
+     (input-field "text" "subject" @subject "Subject" ::events/contact-form-value-change)
+     (text-area "message" @message "Message" ::events/contact-form-value-change)
+     [:button.btn.waves-effect.waves-light
+      "Submit"
+      [:i.material-icons.right "send"]]]))
+
+(defn social-contact [icon content icon-type]
+  [:div.row
+   [:div.col.s3 (if (= icon-type "material") [:i.material-icons icon] [:i.material-icons {:class icon}])]
+   [:div.col.s9 content]])
+
 (defn contact-panel []
-  [:div "This is the contact Page."
-   [:div [:a {:href "#/"} "go to Home Page"]]])
+  [:div.row
+   [:div.col.s12.m5 (contact-form)]
+   [:div.col.s12.m2]
+   [:div.col.s12.m5
+    (social-contact "phone" constants/phone-number "material")
+    (social-contact "email" constants/email-address "material")
+    (social-contact "my_location" constants/location-address "material")
+    (social-contact "ion-social-facebook" constants/facebook "ion")
+    (social-contact "ion-social-linkedin" constants/linkedin "ion")]])
 
 
 ;; navigation
@@ -74,4 +119,4 @@
   (let [active-panel (re-frame/subscribe [::subs/active-panel])]
     [:div
      (nav-panel)
-     [show-panel @active-panel]]))
+     [:div.container [show-panel @active-panel]]]))
