@@ -26,6 +26,12 @@
   (defroute "/about" []
     (re-frame/dispatch [::events/set-active-panel :about-panel]))
 
+  (defroute "/experience" []
+    (re-frame/dispatch [::events/set-active-panel :experience-panel]))
+
+  (defroute "/contact" []
+    (re-frame/dispatch [::events/set-active-panel :contact-panel]))
+
 
   ;; --------------------
   (hook-browser-navigation!))
