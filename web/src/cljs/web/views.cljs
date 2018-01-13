@@ -132,7 +132,7 @@
 
 (defn main-panel []
   (let [active-panel (rf/subscribe [:active-panel])]
-    [:div.wrapper
+    [:div
      (nav-panel @active-panel)
-     [:div#main.container [(:component (get panel-to-details @active-panel {:component [:div]}))]]
+     [:div.container [(:component (get panel-to-details @active-panel {:component [:div]}))]]
      [footer]]))
