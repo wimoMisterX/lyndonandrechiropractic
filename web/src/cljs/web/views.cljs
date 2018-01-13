@@ -1,15 +1,30 @@
 (ns web.views
-  (:require [re-frame.core :as re-frame]
-            [web.subs :as subs]
-            [web.constants :as constants]
+  (:require [re-frame.core :as rf]
+            [reagent.core :as r]
             [clojure.string :as string]
-            [web.events :as events]
-            ))
+
+            [web.utils :refer [md5-hex]]
+            [web.constants :as constants]
+            [web.components.form-input :refer [FormInput]]))
 
 ;; helpers
 
 (defn paragraph [para]
-  [:p.flow-text.left-align para])
+  [:p.flow-text.left-align {:key (md5-hex para)} para])
+
+(defn class-for-validity [valid]
+  (cond
+    (true? valid) "valid"
+    (false? valid) "invalid"
+    :else ""))
+
+(defn form-field [form-prefix form-change-ev input-type field-kw label]
+  (let [field-name (name field-kw)
+        {value :value valid :valid} @(rf/subscribe [(keyword (str form-prefix field-name))])]
+    [FormInput label input-type {:id field-name
+                                 :class (class-for-validity valid)
+                                 :value value
+                                 :on-change #(rf/dispatch [form-change-ev field-kw (-> % .-target .-value)])}]))
 
 
 ;; home
@@ -37,42 +52,38 @@
 
 ;; contact
 
-(defn input-field [input-type field-name value label form-change-ev]
-  [:div.input-field
-    [:input.validate {:type input-type
-                      :id field-name
-                      :value value
-                      :on-change #(re-frame/dispatch [form-change-ev (keyword field-name) (-> % .-target .-value)])}]
-    [:label {:for field-name} label]])
-
-(defn text-area [field-name value label form-change-ev]
-  [:div.input-field
-    [:textarea.materialize-textarea {:id field-name
-                                     :value value
-                                     :on-change #(re-frame/dispatch [form-change-ev (keyword field-name) (-> % .-target .-value)])}]
-    [:label {:for field-name} label]])
+(defn spinner []
+  [:div.preloader-wrapper.small.active
+   [:div.spinner-layer.spinner-green-only
+    [:div.circle-clipper.left
+     [:div.circle]]
+    [:div.gap-patch
+     [:div.circle]]
+    [:div.circle-clipper.right
+     [:div.circle]]]])
 
 (defn contact-form []
-  (let [name (re-frame/subscribe [::subs/contact-form-name])
-        email-address (re-frame/subscribe [::subs/contact-form-email-address])
-        subject (re-frame/subscribe [::subs/contact-form-subject])
-        message (re-frame/subscribe [::subs/contact-form-message])]
+  (let [render-form-field (partial form-field "contact-form-" :contact-form-value-change)
+        form-status @(rf/subscribe [:contact-form-status])]
     [:div
-     (input-field "text" "name" @name "Name" ::events/contact-form-value-change)
-     (input-field "email" "email-address" @email-address "Email Address" ::events/contact-form-value-change)
-     (input-field "text" "subject" @subject "Subject" ::events/contact-form-value-change)
-     (text-area "message" @message "Message" ::events/contact-form-value-change)
-     [:button.btn.waves-effect.waves-light
-      "Submit"
-      [:i.material-icons.right "send"]]]))
+     (render-form-field "text" :name "Name")
+     (render-form-field "email" :email-address "Email Address")
+     (render-form-field "text" :subject "Subject")
+     (render-form-field "textarea" :message "Message")
+     (cond
+       (= form-status :submitting) [spinner]
+       (= form-status :submitted) [:p "Your message has been sent" [:i.material-icons.left "done"]]
+       :else [:button.btn.waves-effect.waves-light {:on-click #(rf/dispatch [:contact-form-submit])}
+               "Submit"
+               [:i.material-icons.right "send"]])]))
 
 (defn personal-contact-row [[icon content]]
-  [:div.row
+  [:div.row.personal-contact {:key icon}
    [:div.col.s3 [:i.material-icons.medium icon]]
-   [:div.col.s9 (map-indexed (fn [idx line] [:p.flow-text {:style (if (= idx 0) {:margin-top "0"})} line]) content)]])
+   [:div.col.s9 (map paragraph content)]])
 
 (defn social-contact [[icon url]]
-  [:div.col.s2
+  [:div.col.s2 {:key icon}
    [:a {:href url :style {:color "black"}}
    [:i.material-icons.medium {:class (str "ion-social-" (name icon))}]]])
 
@@ -91,32 +102,37 @@
 
 ;; navigation
 
-(defn nav-panel []
+(def panel-to-details
+  (array-map :home-panel {:path "#/" :label "Home" :component home-panel}
+             :about-panel {:path "#/about" :label "About" :component about-panel}
+             :experience-panel {:path "#/experience" :label "Experience" :component experience-panel}
+             :contact-panel {:path "#/contact" :label "Contact" :component contact-panel}))
+
+(defn nav-item [active-panel [panel-kw {href :path label :label}]]
+  [:li {:class (if (= active-panel panel-kw) "active") :key label}
+   [:a {:href href} label]])
+
+(defn nav-panel [active-panel]
   [:div {:class "navbar-fixed"}
    [:nav.blue-grey.lighten-3e
     [:div {:class "nav-wrapper" :style {:text-align "center"}}
      [:ul {:class "center" :style {:display "inline-block"}}
-      [:li [:a {:href "#/"} "Home"]]
-      [:li [:a {:href "#/about"} "About"]]
-      [:li [:a {:href "#/experience"} "Experience"]]
-      [:li [:a {:href "#/contact"} "Contact"]]]]]])
+      (map (partial nav-item active-panel) panel-to-details)]]]])
+
+
+;; footer
+
+(defn footer []
+  [:footer.page-footer.blue-grey.lighten-3e
+   [:div.footer-copyright
+    [:div.container "© 2018 Copyright Text"]]])
 
 
 ;; main
 
-(defn- panels [panel-name]
-  (case panel-name
-    :home-panel [home-panel]
-    :about-panel [about-panel]
-    :experience-panel [experience-panel]
-    :contact-panel [contact-panel]
-    [:div]))
-
-(defn show-panel [panel-name]
-  [panels panel-name])
-
 (defn main-panel []
-  (let [active-panel (re-frame/subscribe [::subs/active-panel])]
-    [:div
-     (nav-panel)
-     [:div.container [show-panel @active-panel]]]))
+  (let [active-panel (rf/subscribe [:active-panel])]
+    [:div.wrapper
+     (nav-panel @active-panel)
+     [:div#main.container [(:component (get panel-to-details @active-panel {:component [:div]}))]]
+     [footer]]))

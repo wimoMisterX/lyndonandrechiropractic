@@ -1,7 +1,8 @@
 (ns web.core
   (:require [reagent.core :as reagent]
-            [re-frame.core :as re-frame]
-            [web.events :as events]
+            [re-frame.core :as rf]
+            [web.events]
+            [web.subs]
             [web.routes :as routes]
             [web.views :as views]
             [web.config :as config]))
@@ -13,12 +14,12 @@
     (println "dev mode")))
 
 (defn mount-root []
-  (re-frame/clear-subscription-cache!)
+  (rf/clear-subscription-cache!)
   (reagent/render [views/main-panel]
                   (.getElementById js/document "app")))
 
 (defn ^:export init []
   (routes/app-routes)
-  (re-frame/dispatch-sync [::events/initialize-db])
+  (rf/dispatch-sync [:initialize-db])
   (dev-setup)
   (mount-root))
