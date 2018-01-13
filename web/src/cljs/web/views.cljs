@@ -41,13 +41,13 @@
 ;; about
 
 (defn about-panel []
-  [:div (map paragraph constants/about-content)])
+  [:div {:style {:margin-top "2em"}} (map paragraph constants/about-content)])
 
 
 ;; experience
 
 (defn experience-panel []
-  [:div (map paragraph constants/experience-content)])
+  [:div {:style {:margin-top "2em"}} (map paragraph constants/experience-content)])
 
 
 ;; contact
