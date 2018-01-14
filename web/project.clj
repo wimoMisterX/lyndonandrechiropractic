@@ -28,7 +28,11 @@
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "0.9.4"]
+                   [com.cemerick/piggieback "0.2.2"]
+                   [org.clojure/tools.nrepl "0.2.10"]
                    [re-frisk "0.5.3"]]
+
+    :repl-options {:nrepl-middleware  [cemerick.piggieback/wrap-cljs-repl]}
 
     :plugins      [[lein-figwheel "0.5.13"]]}}
 
