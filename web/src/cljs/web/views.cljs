@@ -126,7 +126,9 @@
 (defn footer []
   [:footer.page-footer.blue-grey.lighten-3e
    [:div.footer-copyright
-    [:div.container "© 2018 Copyright"]]])
+    [:div.container
+     "All copyrights reserved © 2018"
+     [:span.right.hide-on-med-and-down "Design & Development by .."]]]])
 
 
 ;; main
