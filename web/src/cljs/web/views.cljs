@@ -69,6 +69,7 @@
   (let [render-form-field (partial form-field "contact-form-" :contact-form-value-change)
         form-status @(rf/subscribe [:contact-form-status])]
     [:div
+     [:h4 "Please get in touch..."]
      (render-form-field "text" :name "Name")
      (render-form-field "email" :email-address "Email Address")
      (render-form-field "text" :subject "Subject")
@@ -88,13 +89,15 @@
 (defn contact-methods []
   [:div
     (map personal-contact-row constants/personal-contacts)
-    [:div.row
+    [:div.row.social-row
      (map social-contact constants/social-media)]])
 
 (defn contact-panel []
   [:div.row
    [:div.col.s12.m5.contact-form (contact-form)]
-   [:div.col.s12.m2]
+   [:div.col.s12.m2.spacer
+    [:div.valign-wrapper.hide-on-med-and-down
+     [:div.blue-grey.lighten-3e]]]
    [:div.col.s12.m5.contact-methods (contact-methods)]])
 
 

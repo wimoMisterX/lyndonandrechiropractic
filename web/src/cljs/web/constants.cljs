@@ -31,7 +31,7 @@
     Who will relay the images to the Chiropractor and managed accordingly either to continue on with manual conservative care or referred for other interventions."])
 
 (def experience-content
-  ["As a musculoskeletal professional I care for the well-being and general health of my
+  ["As a musculoskeletal professional Lyndon cares for the well-being and general health of his
     patients through the use of manual manipulation to the spine, dry needling, soft
     tissue and exercise therapy. This professional care aims to increase mobility, their
     function as well as lowering pain."
