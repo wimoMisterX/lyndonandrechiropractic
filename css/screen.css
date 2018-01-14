@@ -10,6 +10,7 @@ body {
 
 body p.flow-text {
   font-size: 1.2rem;
+  font-weight: 400;
 }
 
 body div.navbar-fixed, body nav, body div.nav-wrapper {
