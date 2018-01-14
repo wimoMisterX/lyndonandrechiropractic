@@ -13,6 +13,10 @@ body p.flow-text {
   font-weight: 400;
 }
 
+body .fab, body .fas {
+  color: #546e7a;
+}
+
 body div.navbar-fixed, body nav, body div.nav-wrapper {
   text-align: center;
 }
@@ -41,11 +45,37 @@ body div.container div.home-panel h4.job-title {
 }
 
 body div.container div.contact-panel div.contact-form {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
+}
+
+body div.container div.contact-panel div.contact-form h4 {
+  margin-bottom: 1em;
+}
+
+body div.container div.contact-panel div.contact-form button {
+  background-color: #546e7a;
+}
+
+body div.container div.contact-panel div.contact-form button i.fas {
+  color: white;
+}
+
+body div.container div.contact-panel div.spacer div {
+  height: 35rem;
+}
+
+body div.container div.contact-panel div.spacer div div {
+  width: 2px;
+  height: 15rem;
+  margin-left: 50%;
 }
 
 body div.container div.contact-panel div.contact-methods {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
+}
+
+body div.container div.contact-panel div.contact-methods div.personal-contact:first-of-type {
+  margin-top: 5rem;
 }
 
 body div.container div.contact-panel div.contact-methods div.personal-contact {
@@ -57,7 +87,11 @@ body div.container div.contact-panel div.contact-methods div.personal-contact p 
   margin-bottom: 0;
 }
 
-body div.container div.contact-panel div.contact-methods div.social-contact a {
+body div.container div.contact-panel div.contact-methods div.social-row {
+  margin-top: 4rem;
+}
+
+body div.container div.contact-panel div.contact-methods div.social-row div.social-contact a {
   color: unset;
 }
 
