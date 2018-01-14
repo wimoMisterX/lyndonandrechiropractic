@@ -1,8 +1,6 @@
 (ns web.constants)
 
-(def title "Dr.")
-
-(def full-name "Lyndon Andre")
+(def full-name "Dr. Lyndon Andre")
 
 (def job-title "Chiropractor")
 
@@ -52,8 +50,8 @@
     clinical year at Murdoch University."])
 
 (def personal-contacts {:phone ["(03) 9434 300" "(03) 9434 301"]
-                        :email ["lyndonandre@mail.com"]
-                        :my_location ["162, Lincoln Road, Addington, Christchurch"]})
+                        :envelope ["lyndonandre@mail.com"]
+                        :map-marker-alt ["162, Lincoln Road," "Addington, Christchurch"]})
 
 (def social-media {:facebook "https://www.facebook.com/lyndonandrechiropractic"
                    :linkedin "https://www.linkedin.com/in/lyndon-andre-34316053"})

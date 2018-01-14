@@ -18,6 +18,10 @@
     (false? valid) "invalid"
     :else ""))
 
+(defn font-awesome-icon-class [icon]
+  (let [icon-name (if (keyword? icon) (name icon) icon)]
+    (str "fa-" icon-name)))
+
 (defn form-field [form-prefix form-change-ev input-type field-kw label]
   (let [field-name (name field-kw)
         {value :value valid :valid} @(rf/subscribe [(keyword (str form-prefix field-name))])]
@@ -31,9 +35,9 @@
 
 (defn home-panel []
   [:div.row
-   [:div.col.s12.center-align [:img.responsive-img {:style {:height "25em"} :src constants/home-profile-picture}]]
-   [:div.col.s12.center-align [:h3 (string/join " " [constants/title constants/full-name])]]
-   [:div.col.s12.center-align [:h4 {:style {:margin-top 0}} constants/job-title]]
+   [:div.col.s12.center-align [:img.responsive-img {:src constants/home-profile-picture}]]
+   [:div.col.s12.center-align [:h3 constants/full-name]]
+   [:div.col.s12.center-align [:h4.job-title constants/job-title]]
    [:div.col.s12.center-align [:h5 constants/academic-titles]]
    [:div.col.s12.center-align [:p.flow-text constants/summary]]])
 
@@ -41,26 +45,25 @@
 ;; about
 
 (defn about-panel []
-  [:div {:style {:margin-top "2em"}} (map paragraph constants/about-content)])
+  [:div (map paragraph constants/about-content)])
 
 
 ;; experience
 
 (defn experience-panel []
-  [:div {:style {:margin-top "2em"}} (map paragraph constants/experience-content)])
+  [:div (map paragraph constants/experience-content)])
 
 
 ;; contact
 
-(defn spinner []
-  [:div.preloader-wrapper.small.active
-   [:div.spinner-layer.spinner-green-only
-    [:div.circle-clipper.left
-     [:div.circle]]
-    [:div.gap-patch
-     [:div.circle]]
-    [:div.circle-clipper.right
-     [:div.circle]]]])
+(defn contact-form-submit-button []
+  (let [form-status @(rf/subscribe [:contact-form-status])]
+    [:button.btn.waves-effect.waves-light {:on-click #(rf/dispatch [:contact-form-submit])
+                                           :disabled (not (nil? form-status))}
+     (cond
+       (= form-status :submitting) [:span "Sending" [:i.fas.right.fa-circle-notch.fa-spin]]
+       (= form-status :submitted) [:span "Your message has been sent" [:i.fas.right.fa-check]]
+       :else [:span "Send" [:i.fas.right.fa-paper-plane]])]))
 
 (defn contact-form []
   (let [render-form-field (partial form-field "contact-form-" :contact-form-value-change)
@@ -70,22 +73,17 @@
      (render-form-field "email" :email-address "Email Address")
      (render-form-field "text" :subject "Subject")
      (render-form-field "textarea" :message "Message")
-     (cond
-       (= form-status :submitting) [spinner]
-       (= form-status :submitted) [:p "Your message has been sent" [:i.material-icons.left "done"]]
-       :else [:button.btn.waves-effect.waves-light {:on-click #(rf/dispatch [:contact-form-submit])}
-               "Submit"
-               [:i.material-icons.right "send"]])]))
+     (contact-form-submit-button)]))
 
-(defn personal-contact-row [[icon content]]
-  [:div.row.personal-contact {:key icon}
-   [:div.col.s3 [:i.material-icons.medium icon]]
-   [:div.col.s9 (map paragraph content)]])
+(defn personal-contact-row [[icon-kw content]]
+  [:div.row.personal-contact {:key icon-kw}
+   [:div.col.s2 [:i.fas.fa-2x {:class (font-awesome-icon-class icon-kw)}]]
+   [:div.col.s10 (map paragraph content)]])
 
-(defn social-contact [[icon url]]
-  [:div.col.s2 {:key icon}
-   [:a {:href url :style {:color "black"}}
-   [:i.material-icons.medium {:class (str "ion-social-" (name icon))}]]])
+(defn social-contact [[icon-kw url]]
+  [:div.col.s2.social-contact {:key icon-kw}
+   [:a {:href url}
+   [:i.fab.fa-2x {:class (font-awesome-icon-class icon-kw)}]]])
 
 (defn contact-methods []
   [:div
@@ -95,9 +93,9 @@
 
 (defn contact-panel []
   [:div.row
-   [:div.col.s12.m5 {:style {:margin-top "2em"}} (contact-form)]
-   [:div.col.s12.m2 {:style {:margin-top "2em"}}]
-   [:div.col.s12.m5 {:style {:margin-top "2em"}} (contact-methods)]])
+   [:div.col.s12.m5.contact-form (contact-form)]
+   [:div.col.s12.m2]
+   [:div.col.s12.m5.contact-methods (contact-methods)]])
 
 
 ;; navigation
@@ -113,10 +111,10 @@
    [:a {:href href} label]])
 
 (defn nav-panel [active-panel]
-  [:div {:class "navbar-fixed"}
+  [:div.navbar-fixed
    [:nav.blue-grey.lighten-3e
-    [:div {:class "nav-wrapper" :style {:text-align "center"}}
-     [:ul {:class "center" :style {:display "inline-block"}}
+    [:div.nav-wrapper
+     [:ul.center
       (map (partial nav-item active-panel) panel-to-details)]]]])
 
 
@@ -125,14 +123,16 @@
 (defn footer []
   [:footer.page-footer.blue-grey.lighten-3e
    [:div.footer-copyright
-    [:div.container "© 2018 Copyright Text"]]])
+    [:div.container "© 2018 Copyright"]]])
 
 
 ;; main
 
 (defn main-panel []
-  (let [active-panel (rf/subscribe [:active-panel])]
+  (let [active-panel @(rf/subscribe [:active-panel])]
     [:div
-     (nav-panel @active-panel)
-     [:div.container [(:component (get panel-to-details @active-panel {:component [:div]}))]]
+     (nav-panel active-panel)
+     [:div.container
+      [:div {:class (name active-panel)}
+       [(:component (get panel-to-details active-panel {:component [:div]}))]]]
      [footer]]))

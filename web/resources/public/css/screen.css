@@ -8,17 +8,62 @@ body {
   min-height: 100%;
 }
 
-img.profile-picture-home {
-  height: 500px;
+body p.flow-text {
+  font-size: 1.2rem;
 }
 
-div.personal-contact, p:first-of-type {
-  margin-top: 0;
+body div.navbar-fixed, body nav, body div.nav-wrapper {
+  text-align: center;
 }
 
-footer.page-footer {
+body div.navbar-fixed ul.center, body nav ul.center, body div.nav-wrapper ul.center {
+  display: inline-block;
+}
+
+body footer.page-footer {
   padding-top: 0;
   position: absolute;
   bottom: 0;
   width: 100%;
+}
+
+body div.container div.home-panel {
+  margin-top: 2rem;
+}
+
+body div.container div.home-panel img.responsive-img {
+  height: 25em;
+}
+
+body div.container div.home-panel h4.job-title {
+  margin-top: 0;
+}
+
+body div.container div.contact-panel div.contact-form {
+  margin-top: 2.5rem;
+}
+
+body div.container div.contact-panel div.contact-methods {
+  margin-top: 2.5rem;
+}
+
+body div.container div.contact-panel div.contact-methods div.personal-contact {
+  margin-bottom: 3rem;
+}
+
+body div.container div.contact-panel div.contact-methods div.personal-contact p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+body div.container div.contact-panel div.contact-methods div.social-contact a {
+  color: unset;
+}
+
+body div.container div.about-panel {
+  margin-top: 2rem;
+}
+
+body div.container div.experience-panel {
+  margin-top: 2rem;
 }
