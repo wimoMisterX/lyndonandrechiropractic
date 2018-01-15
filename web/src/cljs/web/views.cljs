@@ -9,8 +9,8 @@
 
 ;; helpers
 
-(defn paragraph [para]
-  [:p.flow-text.left-align {:key (md5-hex para)} para])
+(defn paragraph [alignment para]
+  [:p.flow-text {:class (str alignment "-align") :key (md5-hex para)} para])
 
 (defn class-for-validity [valid]
   (cond
@@ -45,13 +45,13 @@
 ;; about
 
 (defn about-panel []
-  [:div (map paragraph constants/about-content)])
+  [:div (map (partial paragraph "left") constants/about-content)])
 
 
 ;; experience
 
 (defn experience-panel []
-  [:div (map paragraph constants/experience-content)])
+  [:div (map (partial paragraph "left") constants/experience-content)])
 
 
 ;; contact
@@ -79,7 +79,7 @@
 (defn personal-contact-row [[icon-kw content]]
   [:div.row.personal-contact {:key icon-kw}
    [:div.col.s2 [:i.fas.fa-2x {:class (font-awesome-icon-class icon-kw)}]]
-   [:div.col.s10 (map paragraph content)]])
+   [:div.col.s10 (map (partial paragraph "right") content)]])
 
 (defn social-contact [[icon-kw url]]
   [:div.col.s2.social-contact {:key icon-kw}
